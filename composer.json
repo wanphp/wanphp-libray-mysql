@@ -1,0 +1,28 @@
+{
+  "name": "wanphp/mysql",
+  "type": "wanphp-extend",
+  "description": "wanphp MySQL 基础操作",
+  "keywords": [
+    "database",
+    "wanphp MySQL library",
+    "wanphp framework"
+  ],
+  "homepage": "https://www.wanphp.com",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "火子",
+      "email": "wanphp@outlook.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "wanphp/composer-installers-extender": "*",
+    "catfan/medoo": "^1.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Wanphp\\Mysql\\": "/src"
+    }
+  }
+}
