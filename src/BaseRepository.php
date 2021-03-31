@@ -2,7 +2,7 @@
 
 namespace Wanphp\Mysql;
 
-abstract class BaseRepository
+abstract class BaseRepository implements BaseInterface
 {
   protected $db;
   protected $tableName;
@@ -18,10 +18,7 @@ abstract class BaseRepository
   }
 
   /**
-   * 插入自定义数据
-   * @param array $datas
-   * @return int 最后插入数据ID
-   * @throws \Exception
+   * {@inheritDoc}
    */
   public function insert(array $datas): int
   {
@@ -72,11 +69,7 @@ abstract class BaseRepository
   }
 
   /**
-   * 更新指定数据
-   * @param array $data
-   * @param array $where
-   * @return int 更新数量
-   * @throws \Exception
+   * {@inheritDoc}
    */
   public function update(array $data, array $where): int
   {
@@ -108,11 +101,7 @@ abstract class BaseRepository
   }
 
   /**
-   * 自定义查询
-   * @param string $columns
-   * @param array|null $where
-   * @return array
-   * @throws \Exception
+   * {@inheritDoc}
    */
   public function select(string $columns = '*', array $where = null): array
   {
@@ -127,11 +116,7 @@ abstract class BaseRepository
   }
 
   /**
-   * 获取一条数据
-   * @param string $columns
-   * @param array|null $where
-   * @return mixed
-   * @throws \Exception
+   * {@inheritDoc}
    */
   public function get(string $columns = '*', array $where = null)
   {
@@ -146,9 +131,7 @@ abstract class BaseRepository
   }
 
   /**
-   * @param string $columns
-   * @param array|null $where
-   * @return int
+   * {@inheritDoc}
    */
   public function count(string $columns = '*', array $where = null): int
   {
@@ -162,9 +145,7 @@ abstract class BaseRepository
   }
 
   /**
-   * @param string $column
-   * @param array|null $where
-   * @return float
+   * {@inheritDoc}
    */
   public function sum(string $column, array $where = null): float
   {
@@ -178,10 +159,7 @@ abstract class BaseRepository
   }
 
   /**
-   * 自定义删除
-   * @param array $where
-   * @return int 删除数量
-   * @throws \Exception
+   * {@inheritDoc}
    */
   public function delete(array $where): int
   {
@@ -195,7 +173,7 @@ abstract class BaseRepository
   }
 
   /**
-   * @throws \Exception
+   * {@inheritDoc}
    */
   public function log()
   {
