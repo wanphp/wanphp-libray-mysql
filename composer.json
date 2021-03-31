@@ -1,5 +1,5 @@
 {
-  "name": "wanphp/mysql",
+  "name": "wanphp/composer-mysql",
   "type": "wanphp-extend",
   "description": "wanphp MySQL 基础操作",
   "keywords": [
