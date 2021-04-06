@@ -6,7 +6,7 @@
  * Time: 9:46
  */
 
-namespace Wanphp\Mysql;
+namespace Wanphp\Libray\Mysql;
 
 
 interface BaseInterface

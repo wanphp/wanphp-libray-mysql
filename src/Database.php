@@ -1,6 +1,6 @@
 <?php
 
-namespace Wanphp\Mysql;
+namespace Wanphp\Libray\Mysql;
 
 
 use Medoo\Medoo;
