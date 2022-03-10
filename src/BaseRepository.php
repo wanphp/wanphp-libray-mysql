@@ -4,13 +4,13 @@ namespace Wanphp\Libray\Mysql;
 
 abstract class BaseRepository implements BaseInterface
 {
-  protected $db;
-  protected $tableName;
-  private $entityClass;
-  private $errCode = null;
-  private $errMessage = '';
+  protected Database $db;
+  protected string $tableName;
+  private string $entityClass;
+  private string $errCode = '';
+  private string $errMessage = '';
 
-  public function __construct(Database $database, $tableName, $entityClass)
+  public function __construct(Database $database, string $tableName, string $entityClass)
   {
     $this->db = $database;
     $this->tableName = $tableName;
@@ -20,7 +20,7 @@ abstract class BaseRepository implements BaseInterface
   /**
    * {@inheritDoc}
    */
-  public function insert(array $datas): int
+  public function insert(array $data): int
   {
     $required = [];//必须项
     try {
@@ -33,34 +33,34 @@ abstract class BaseRepository implements BaseInterface
       throw new \Exception($exception->getMessage(), $exception->getCode());
     }
 
-    if (!isset($datas[0])) $datas = [$datas];
-    foreach ($datas as &$data) {
+    if (!isset($data[0])) $data = [$data];
+    foreach ($data as &$item) {
       $fields = [];
-      foreach ($data as $key => $value) {
+      foreach ($item as $key => $value) {
         if ($pos = strpos($key, '[')) {
           $field = substr($key, 0, $pos);
-          $data[$field] = $value;
-          unset($data[$key]);
+          $item[$field] = $value;
+          unset($item[$key]);
           $fields[$field] = $key;
         }
       }
 
-      $data = array_filter((new $this->entityClass($data))->jsonSerialize(), function ($value, $key) use ($required) {
-        if (in_array($key, $required) && ($value == '' || is_null($value))) {
+      $item = array_filter((new $this->entityClass($item))->jsonSerialize(), function ($value, $key) use ($required) {
+        if (in_array($key, $required) && $value == '') {
           throw new \Exception($key . ' - 不能为空');
         }
         return !is_null($value);
       }, ARRAY_FILTER_USE_BOTH);
       foreach ($fields as $key => $field) {
-        if (isset($data[$key])) {
-          $data[$field] = $data[$key];
-          unset($data[$key]);
+        if (isset($item[$key])) {
+          $item[$field] = $item[$key];
+          unset($item[$key]);
         }
       }
     }
 
     try {
-      $this->db->insert($this->tableName, $datas);
+      $this->db->insert($this->tableName, $data);
     } catch (\Exception $e) {
       $this->errCode = $e->getCode();
       $this->errMessage = $e->getMessage();
@@ -195,7 +195,7 @@ abstract class BaseRepository implements BaseInterface
       if (in_array($this->errCode, ['42S02', '42S22'])) {
         $this->db->initTable($this->tableName, $this->entityClass);
       }
-      throw new \Exception($this->errCode . ':' . $this->errMessage, $this->errCode);
+      throw new \Exception($this->errCode . ':' . $this->errMessage);
     }
 
     if (is_null($error[1])) return $result;
