@@ -9,10 +9,10 @@ class Database extends Medoo
 {
   /**
    * @param string $table 表名
-   * @param string $classcame 实体
+   * @param string $classname 实体
    * @throws \Exception
    */
-  public function initTable(string $table, string $classcame)
+  public function initTable(string $table, string $classname)
   {
     if ($this->logging) {
       $tableName = $this->prefix . $table;
@@ -37,7 +37,7 @@ class Database extends Medoo
       $after = '';
 
       try {
-        $class = new \ReflectionClass($classcame); //建立实体类的反射类
+        $class = new \ReflectionClass($classname); //建立实体类的反射类
         $properties = $class->getProperties(\ReflectionProperty::IS_PRIVATE);
         foreach ($properties as $property) {
           $docblock = $property->getDocComment();//取成员变量属性
