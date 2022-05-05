@@ -20,9 +20,8 @@ abstract class BaseRepository implements BaseInterface
    */
   public function insert(array $data): int
   {
-    $required = $this->required();
     if (!isset($data[0])) $data = [$data];
-    foreach ($data as &$item) $this->checkedData($item, $required);
+    foreach ($data as &$item) $this->checkedData($item, $this->required());
 
     $this->db->insert($this->tableName, $data);
     return $this->returnResult($this->db->id() ?? 0);
@@ -33,7 +32,7 @@ abstract class BaseRepository implements BaseInterface
    */
   public function update(array $data, array $where): int
   {
-    $this->checkedData($data, $this->required());
+    $this->checkedData($data, []);//$this->required() 更新数据时不做数据完整性检测
     $counts = $this->db->update($this->tableName, $data, $where)->rowCount();
     return $this->returnResult($counts ?? 0);
   }
@@ -131,7 +130,7 @@ abstract class BaseRepository implements BaseInterface
     }
 
     $data = array_filter((new $this->entityClass($data))->jsonSerialize(), function ($value, $key) use ($required) {
-      if (in_array($key, $required) && $value == '') {
+      if (!empty($required) && in_array($key, $required) && $value == '') {
         throw new \Exception($key . ' - 不能为空');
       }
       return !is_null($value);
