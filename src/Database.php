@@ -20,17 +20,17 @@ class Database extends Medoo
 
       //源表结构
       $source = ['fields' => [], 'pri' => []];
-      try {
+      // 表存在更新表
+      if (is_array($this->errorInfo) && $this->errorInfo[1] != 1146) {
         $query = $this->exec("DESC `{$tableName}`");
-        while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
+        if ($query) while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
           $source['fields'][] = $row['Field'];
           if ($row['Key'] == 'PRI') $source['pri'][] = $row['Field'];
           if ($row['Key'] == 'UNI') $source['uni'][] = $row['Field'];
           if ($row['Key'] == 'MUL') $source['mul'][] = $row['Field'];
         }
-        //print_r($source);
-      } catch (\Exception $e) {
       }
+
       $pri = [];//主键字段
       $uni = [];//唯一索引
       $mul = [];//普通索引
