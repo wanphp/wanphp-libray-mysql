@@ -9,13 +9,15 @@
 namespace Wanphp\Libray\Mysql;
 
 
+use Exception;
+
 interface BaseInterface
 {
   /**
    * 插入自定义数据
    * @param array $data
    * @return int 最后插入数据ID
-   * @throws \Exception
+   * @throws Exception
    */
   public function insert(array $data): int;
 
@@ -24,53 +26,53 @@ interface BaseInterface
    * @param array $data
    * @param array $where
    * @return int 更新数量
-   * @throws \Exception
+   * @throws Exception
    */
   public function update(array $data, array $where): int;
 
   /**
    * 自定义查询
    * @param string $columns
-   * @param array $where
+   * @param $where
    * @return array
-   * @throws \Exception
+   * @throws Exception
    */
-  public function select(string $columns = '*', array $where = null): array;
+  public function select(string $columns = '*', $where = null): array;
 
   /**
    * 获取一条数据
    * @param string $columns
-   * @param array $where
+   * @param $where
    * @return mixed
-   * @throws \Exception
+   * @throws Exception
    */
-  public function get(string $columns = '*', array $where = null);
+  public function get(string $columns = '*', $where = null);
 
   /**
    * @param string $columns
-   * @param array|null $where
+   * @param $where
    * @return int
    */
-  public function count(string $columns = '*', array $where = null): int;
+  public function count(string $columns = '*', $where = null): int;
 
   /**
    * @param string $column
-   * @param array|null $where
+   * @param $where
    * @return float
    */
-  public function sum(string $column, array $where = null): float;
+  public function sum(string $column, $where = null): float;
 
   /**
    * 自定义删除
    * @param array $where
    * @return int 删除数量
-   * @throws \Exception
+   * @throws Exception
    */
   public function delete(array $where): int;
 
   /**
    * 返回日志
-   * @throws \Exception
+   * @throws Exception
    */
   public function log();
 }

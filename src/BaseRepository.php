@@ -33,14 +33,15 @@ abstract class BaseRepository implements BaseInterface
   public function update(array $data, array $where): int
   {
     $this->checkedData($data, []);//$this->required() 更新数据时不做数据完整性检测
-    $counts = $this->db->update($this->tableName, $data, $where)->rowCount();
+    $res = $this->db->update($this->tableName, $data, $where);
+    if ($res) $counts = $res->rowCount();
     return $this->returnResult($counts ?? 0);
   }
 
   /**
    * {@inheritDoc}
    */
-  public function select(string $columns = '*', array $where = null): array
+  public function select(string $columns = '*', $where = null): array
   {
     if ($columns != '*' && strpos($columns, ',') > 0) $columns = explode(',', $columns);
     $data = $this->db->select($this->tableName, $columns, $where);
@@ -50,7 +51,7 @@ abstract class BaseRepository implements BaseInterface
   /**
    * {@inheritDoc}
    */
-  public function get(string $columns = '*', array $where = null)
+  public function get(string $columns = '*', $where = null)
   {
     if ($columns != '*' && strpos($columns, ',') > 0) $columns = explode(',', $columns);
     $data = $this->db->get($this->tableName, $columns, $where);
@@ -60,7 +61,7 @@ abstract class BaseRepository implements BaseInterface
   /**
    * {@inheritDoc}
    */
-  public function count(string $columns = '*', array $where = null): int
+  public function count(string $columns = '*', $where = null): int
   {
     return $this->db->count($this->tableName, $columns, $where);
   }
@@ -68,7 +69,7 @@ abstract class BaseRepository implements BaseInterface
   /**
    * {@inheritDoc}
    */
-  public function sum(string $column, array $where = null): float
+  public function sum(string $column, $where = null): float
   {
     $total = $this->db->sum($this->tableName, $column, $where);
     return $total ?? 0.00;
@@ -79,7 +80,8 @@ abstract class BaseRepository implements BaseInterface
    */
   public function delete(array $where): int
   {
-    $counts = $this->db->delete($this->tableName, $where)->rowCount();
+    $res = $this->db->delete($this->tableName, $where);
+    if ($res) $counts = $res->rowCount();
     return $this->returnResult($counts ?? 0);
   }
 

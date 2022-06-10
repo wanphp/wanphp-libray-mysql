@@ -10,8 +10,8 @@ trait EntityTrait
    */
   public function __construct(array $array)
   {
-    foreach (array_intersect_key($array, $this->jsonSerialize()) as $key => $value) {
-      $this->{$key} = $value;
+    foreach ($array as $key => $value) {
+      if (property_exists($this, $key)) $this->{$key} = $value;
     }
   }
 
@@ -23,7 +23,7 @@ trait EntityTrait
   public function __call($name, $arguments = null)
   {
     $action = substr($name, 0, 3);
-    $property = strtolower(substr($name, 3));
+    $property = substr($name, 3);
     if ($action == 'set' && property_exists($this, $property)) {
       $this->{$property} = $arguments;
       return $arguments;
