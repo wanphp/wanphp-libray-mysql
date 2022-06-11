@@ -3,6 +3,7 @@
 namespace Wanphp\Libray\Mysql;
 
 
+use Exception;
 use Medoo\Medoo;
 
 class Database extends Medoo
@@ -10,7 +11,7 @@ class Database extends Medoo
   /**
    * @param string $table 表名
    * @param string $classname 实体
-   * @throws \Exception
+   * @throws Exception
    */
   public function initTable(string $table, string $classname)
   {
@@ -41,7 +42,7 @@ class Database extends Medoo
         $properties = $class->getProperties(\ReflectionProperty::IS_PRIVATE);
         foreach ($properties as $property) {
           $docblock = $property->getDocComment();//取成员变量属性
-          if (preg_match('/\@DBType\(\{(.*?)\}\)/', $docblock, $primary)) {
+          if (preg_match('/DBType\({(.*?)}\)/', $docblock, $primary)) {
             $dbtype = json_decode("{{$primary[1]}}");
             if (json_last_error() === JSON_ERROR_NONE) {
               if (isset($dbtype->key)) {
@@ -61,7 +62,7 @@ class Database extends Medoo
           }
         }
       } catch (\ReflectionException $exception) {
-        throw new \Exception($exception->getMessage(), $exception->getCode());
+        throw new Exception($exception->getMessage(), $exception->getCode());
       }
 
       if (!empty($stack)) {

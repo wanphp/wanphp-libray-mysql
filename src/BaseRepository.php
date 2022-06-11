@@ -2,6 +2,8 @@
 
 namespace Wanphp\Libray\Mysql;
 
+use Exception;
+
 abstract class BaseRepository implements BaseInterface
 {
   protected Database $db;
@@ -21,7 +23,8 @@ abstract class BaseRepository implements BaseInterface
   public function insert(array $data): int
   {
     if (!isset($data[0])) $data = [$data];
-    foreach ($data as &$item) $this->checkedData($item, $this->required());
+    $required = $this->required();
+    foreach ($data as &$item) $this->checkedData($item, $required);
 
     $this->db->insert($this->tableName, $data);
     return $this->returnResult($this->db->id() ?? 0);
@@ -91,24 +94,34 @@ abstract class BaseRepository implements BaseInterface
   public function log()
   {
     $logs = implode(PHP_EOL, $this->db->log());
-    throw new \Exception($logs ?: '无数据库操作！');
+    throw new Exception($logs ?: '无数据库操作！');
   }
 
   /**
-   * @return array|false|string[]
-   * @throws \Exception
+   * @return array
+   * @throws Exception
    */
-  private function required()
+  private function required(): array
   {
     $required = [];//必须项
     try {
       $class = new \ReflectionClass($this->entityClass); //建立实体类的反射类
       $docblock = $class->getDocComment();
-      if (preg_match('/required=\{(.*?)\}/', $docblock, $primary)) {
-        $required = explode(',', str_replace(['"', '\''], '', $primary[1]));
+      if (preg_match('/required={(.*?)}/', $docblock, $primary)) {
+        $property = json_decode("{{$primary[1]}}");
+        if (json_last_error() !== JSON_ERROR_NONE) throw new Exception('必须项JSON格式错误.');
+        foreach ($property as $item) {
+          if ($class->hasProperty($item)) {
+            //属性存在，取属性描述
+            $docblock = $class->getProperty($item)->getDocComment();
+            if (preg_match('/Property\(description="(.*?)"\)/', $docblock, $primary)) {
+              $required[$item] = $primary[1];
+            }
+          }
+        }
       }
     } catch (\ReflectionException $exception) {
-      throw new \Exception($exception->getMessage(), $exception->getCode());
+      throw new Exception($exception->getMessage(), $exception->getCode());
     }
     return $required;
   }
@@ -117,38 +130,29 @@ abstract class BaseRepository implements BaseInterface
    * @param $data
    * @param $required
    * @return void
-   * @throws \Exception
+   * @throws Exception
    */
   private function checkedData(&$data, $required)
   {
-    $fields = [];
-    foreach ($data as $key => $value) {
-      if ($pos = strpos($key, '[')) {
-        $field = substr($key, 0, $pos);
-        $data[$field] = $value;
-        unset($data[$key]);
-        $fields[$field] = $key;
-      }
-    }
-
     $data = array_filter((new $this->entityClass($data))->jsonSerialize(), function ($value, $key) use ($required) {
-      if (!empty($required) && in_array($key, $required) && $value == '') {
-        throw new \Exception($key . ' - 不能为空');
+      if (!empty($required) && array_key_exists($key, $required) && $value == '') {
+        throw new Exception($required[$key] . ' - 不能为空');
       }
       return !is_null($value);
     }, ARRAY_FILTER_USE_BOTH);
-    foreach ($fields as $key => $field) {
-      if (isset($data[$key])) {
-        $data[$field] = $data[$key];
-        unset($data[$key]);
-      }
+
+    $res = [];
+    foreach ($data as $key => $value) {
+      if (is_array($value)) $key .= '[JSON]';
+      $res[$key] = $value;
     }
+    $data = $res;
   }
 
   /**
    * @param $result
    * @return mixed
-   * @throws \Exception
+   * @throws Exception
    */
   private function returnResult($result)
   {
@@ -159,6 +163,6 @@ abstract class BaseRepository implements BaseInterface
       $this->db->initTable($this->tableName, $this->entityClass);
     }
 
-    throw new \Exception($error[2], $error[1]);
+    throw new Exception($error[2], $error[1]);
   }
 }
