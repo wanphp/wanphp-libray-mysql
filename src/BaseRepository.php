@@ -108,7 +108,7 @@ abstract class BaseRepository implements BaseInterface
       $class = new \ReflectionClass($this->entityClass); //建立实体类的反射类
       $docblock = $class->getDocComment();
       if (preg_match('/required={(.*?)}/', $docblock, $primary)) {
-        $property = json_decode("{{$primary[1]}}");
+        $property = json_decode("[{$primary[1]}]");
         if (json_last_error() !== JSON_ERROR_NONE) throw new Exception('必须项JSON格式错误.');
         foreach ($property as $item) {
           if ($class->hasProperty($item)) {
@@ -129,7 +129,6 @@ abstract class BaseRepository implements BaseInterface
   /**
    * @param $data
    * @param $required
-   * @return void
    * @throws Exception
    */
   private function checkedData(&$data, $required)
@@ -151,7 +150,6 @@ abstract class BaseRepository implements BaseInterface
 
   /**
    * @param $result
-   * @return mixed
    * @throws Exception
    */
   private function returnResult($result)
