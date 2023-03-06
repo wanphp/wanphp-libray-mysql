@@ -36,6 +36,7 @@ abstract class BaseRepository implements BaseInterface
   public function update(array $data, array $where): int
   {
     $this->checkedData($data, []);//$this->required() 更新数据时不做数据完整性检测
+    if (empty($data)) throw new Exception('更新数据不能为空！');
     $res = $this->db->update($this->tableName, $data, $where);
     if ($res) $counts = $res->rowCount();
     return $this->returnResult($counts ?? 0);
@@ -72,10 +73,9 @@ abstract class BaseRepository implements BaseInterface
   /**
    * {@inheritDoc}
    */
-  public function sum(string $column, $where = null): float
+  public function sum(string $column, $where = null): ?string
   {
-    $total = $this->db->sum($this->tableName, $column, $where);
-    return $total ?? 0.00;
+    return $this->db->sum($this->tableName, $column, $where);
   }
 
   /**

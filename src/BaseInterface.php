@@ -57,10 +57,10 @@ interface BaseInterface
 
   /**
    * @param string $column
-   * @param $where
-   * @return float
+   * @param null $where
+   * @return string|null
    */
-  public function sum(string $column, $where = null): float;
+  public function sum(string $column, $where = null): ?string;
 
   /**
    * 自定义删除
