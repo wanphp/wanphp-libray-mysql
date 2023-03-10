@@ -39,7 +39,7 @@ class Database extends Medoo
 
       try {
         $class = new \ReflectionClass($classname); //建立实体类的反射类
-        $properties = $class->getProperties(\ReflectionProperty::IS_PRIVATE);
+        $properties = $class->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED);
         foreach ($properties as $property) {
           $docblock = $property->getDocComment();//取成员变量属性
           if (preg_match('/DBType\({(.*?)}\)/', $docblock, $primary)) {

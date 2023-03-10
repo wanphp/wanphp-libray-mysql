@@ -52,6 +52,7 @@ interface BaseInterface
    * @param string $columns
    * @param $where
    * @return int
+   * @throws Exception
    */
   public function count(string $columns = '*', $where = null): int;
 
@@ -59,6 +60,7 @@ interface BaseInterface
    * @param string $column
    * @param null $where
    * @return string|null
+   * @throws Exception
    */
   public function sum(string $column, $where = null): ?string;
 

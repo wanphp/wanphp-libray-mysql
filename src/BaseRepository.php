@@ -67,7 +67,7 @@ abstract class BaseRepository implements BaseInterface
    */
   public function count(string $columns = '*', $where = null): int
   {
-    return $this->db->count($this->tableName, $columns, $where);
+    return $this->returnResult($this->db->count($this->tableName, $columns, $where));
   }
 
   /**
@@ -75,7 +75,7 @@ abstract class BaseRepository implements BaseInterface
    */
   public function sum(string $column, $where = null): ?string
   {
-    return $this->db->sum($this->tableName, $column, $where);
+    return $this->returnResult($this->db->sum($this->tableName, $column, $where));
   }
 
   /**
