@@ -9,11 +9,21 @@ use Medoo\Medoo;
 class Database extends Medoo
 {
   /**
+   * 设置通过前缀创建使用分表
+   * @param string $prefix
+   * @return void
+   */
+  public function setPrefix(string $prefix): void
+  {
+    if (!str_contains($this->prefix, $prefix)) $this->prefix .= $prefix;
+  }
+
+  /**
    * @param string $table 表名
    * @param string $classname 实体
    * @throws Exception
    */
-  public function initTable(string $table, string $classname)
+  public function initTable(string $table, string $classname): void
   {
     if ($this->logging) {
       $tableName = $this->prefix . $table;

@@ -14,6 +14,13 @@ use Exception;
 interface BaseInterface
 {
   /**
+   * 设置前缀创建分表
+   * @param string $prefix
+   * @return void
+   */
+  public function prefix(string $prefix): void;
+
+  /**
    * 插入自定义数据
    * @param array $data
    * @return int 最后插入数据ID

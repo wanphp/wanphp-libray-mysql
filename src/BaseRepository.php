@@ -20,6 +20,16 @@ abstract class BaseRepository implements BaseInterface
   /**
    * {@inheritDoc}
    */
+  public function prefix(string $prefix): void
+  {
+    $db = clone $this->db;
+    $db->setPrefix($prefix);
+    $this->db = $db;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function insert(array $data): int
   {
     if (!isset($data[0])) $data = [$data];
