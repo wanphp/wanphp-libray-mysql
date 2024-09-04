@@ -45,7 +45,13 @@ abstract class BaseRepository implements BaseInterface
    */
   public function update(array $data, array $where): int
   {
+    // 保留[+]、[-]、[*]和[/]数学运算
+    $reserve = [];
+    foreach ($data as $key => $value) {
+      if (str_contains($key, '[')) $reserve[$key] = $value;
+    }
     $this->checkedData($data, []);//$this->required() 更新数据时不做数据完整性检测
+    if ($reserve) $data = array_merge($data, $reserve);
     if (empty($data)) throw new Exception('更新数据不能为空！');
     $res = $this->db->update($this->tableName, $data, $where);
     if ($res) $counts = $res->rowCount();
