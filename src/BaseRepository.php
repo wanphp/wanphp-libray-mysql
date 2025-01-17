@@ -3,6 +3,7 @@
 namespace Wanphp\Libray\Mysql;
 
 use Exception;
+use PDOException;
 
 abstract class BaseRepository implements BaseInterface
 {
@@ -64,7 +65,11 @@ abstract class BaseRepository implements BaseInterface
   public function select(string $columns = '*', $where = null): array
   {
     if ($columns != '*' && strpos($columns, ',') > 0) $columns = explode(',', $columns);
-    $data = $this->db->select($this->tableName, $columns, $where);
+    try {
+      $data = $this->db->select($this->tableName, $columns, $where);
+    } catch (PDOException $e) {
+      $this->db->errorInfo = $e->errorInfo;
+    }
     return $this->returnResult($data ?? []);
   }
 
@@ -74,7 +79,11 @@ abstract class BaseRepository implements BaseInterface
   public function get(string $columns = '*', $where = null)
   {
     if ($columns != '*' && strpos($columns, ',') > 0) $columns = explode(',', $columns);
-    $data = $this->db->get($this->tableName, $columns, $where);
+    try {
+      $data = $this->db->get($this->tableName, $columns, $where);
+    } catch (PDOException $e) {
+      $this->db->errorInfo = $e->errorInfo;
+    }
     return $this->returnResult($data ?? []);
   }
 
@@ -173,7 +182,7 @@ abstract class BaseRepository implements BaseInterface
     $error = $this->db->errorInfo;
     if (is_null($error)) return $result;
     //数据表不存在，或字段不存在，主键冲突,创建或更新表
-    if (is_array($error) && in_array($error[1], [1146, 1054, 1062])) {
+    if (is_array($error) && in_array($error[1], [1, 1146, 1054, 1062])) {
       $this->db->initTable($this->tableName, $this->entityClass);
     }
 
